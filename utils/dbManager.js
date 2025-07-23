@@ -65,8 +65,21 @@ export async function getAllUsers(roomCode) {
 	return User.find({});
 }
 
+//find user by socketId
+export async function findBySocketId(id) {
+	const user = await User.findOne({ socketId: id });
+	console.log(user)
+	if (!user) {
+		return "Not found"
+	}
+	return user.username
+}
+
 // Remove a user by socketId and update room
 export async function removeUser(socketId) {
+	if (!socketId) {
+		return
+	}
 	const user = await User.findOne({ socketId });
 	if (!user) return null;
 
@@ -77,20 +90,21 @@ export async function removeUser(socketId) {
 	}
 
 	await User.deleteOne({ _id: user._id });
-	return user;
+	return user.username;
 }
 
 //Messages
 
 // Add message to a room
-export async function addMessage(roomCode, senderId, senderName, message) {
+export async function addMessage(roomCode, senderName, message) {
 	const room = await Room.findOne({ roomCode });
-	if (!room) throw new Error("Room not found");
+	if (!room) {
+		return "Room Not Found"
+	};
 
 	const newMessage = new Message({
 		room: room._id,
-		sender: senderId,
-		senderName,
+		senderName: senderName,
 		content: message,
 	});
 	await newMessage.save();

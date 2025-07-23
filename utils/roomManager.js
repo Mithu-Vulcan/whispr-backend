@@ -22,9 +22,7 @@ export async function generateRoomCode() {
 
 export async function attemptJoinRoom(name, code, socketId) {
 	const users = await getAllUsers();
-	console.log(users);
 	const currentUsers = new Set(users.map((user) => user.username));
-	console.log(currentUsers);
 	const exists = await checkRoom(code);
 	if (exists) {
 		if (currentUsers.has(name)) {
